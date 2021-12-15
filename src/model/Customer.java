@@ -17,7 +17,23 @@ public class Customer {
             IllegalArgumentException ex = new IllegalArgumentException();
             throw ex;
         }
+        else {
+            this.email = email;
+        }
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     @Override
     public String toString(){
         return "firstName: " + firstName + " lastName: " + lastName + " email: " + email;
