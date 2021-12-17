@@ -2,14 +2,31 @@ package api;
 
 import model.Customer;
 import model.IRoom;
+import model.Room;
 import model.Reservation;
 import java.util.Date;
 import java.util.Collection;
+import service.ReservationService;
+import service.CustomerService;
 
-public abstract class HotelResource {
-    public abstract Customer getCustomer(String email);
-    public abstract void createACustomer(String email, String firstName, String lastName);
-    public abstract IRoom getRoom(String roomNumber);
-    public abstract Reservation bookARoom(String cusmtomerEmail, IRoom room, Date checkInDate, Date checkOutDate);
-    public abstract Collection<Reservation> getCustomersReservations(String customerEmail);
+public class HotelResource {
+    public static Customer getCustomer(String email){
+        return CustomerService.getCustomer(email);
+    }
+
+    public static void createACustomer(String email, String firstName, String lastName){
+        CustomerService.addCustomer(email, firstName, lastName);
+    }
+
+    public static IRoom getRoom(String roomNumber){
+        return ReservationService.getARoom(roomNumber);
+    }
+
+    public static Reservation bookARoom(String customerEmail, Room room, Date checkInDate, Date checkOutDate){
+        return ReservationService.reserveARoom(getCustomer(customerEmail), room, checkInDate, checkOutDate);
+    }
+
+    public static Collection<Reservation> getCustomersReservations(String customerEmail){
+        return ReservationService.getCustomersReservation(getCustomer(customerEmail));
+    }
 }
