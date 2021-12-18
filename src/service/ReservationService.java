@@ -10,18 +10,18 @@ import java.util.*;
 
 public class ReservationService {
     //state
-    public static List<Room> roomList = new LinkedList<>();
+    public static List<IRoom> roomList = new LinkedList<>();
     public static Collection<Reservation> reservationList = new LinkedList<>();
 
 
     //method
-    public static void addRoom(Room room){
+    public static void addRoom(IRoom room){
         roomList.add(room);
     }
 
-    public static Room getARoom(String roomId){
+    public static IRoom getARoom(String roomId){
         //检索列表中的roomId，返回相应的Room
-        for(Room room: roomList){
+        for(IRoom room: roomList){
             if(room.getRoomNumber() == roomId){
                 return room;
             }
@@ -29,7 +29,7 @@ public class ReservationService {
         return null;
     }
 
-    public static Reservation reserveARoom(Customer customer, Room room, Date checkInDate, Date checkOutDate){
+    public static Reservation reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate){
         Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
         reservationList.add(reservation);
         return reservation;

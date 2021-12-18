@@ -20,7 +20,7 @@ public class AdminResource {
         }
     }
 
-    public Collection<Room> getAllRooms(){
+    public Collection<IRoom> getAllRooms(){
         return ReservationService.roomList;
     }
 
