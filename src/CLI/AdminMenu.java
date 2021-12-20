@@ -31,7 +31,7 @@ public class AdminMenu {
             case 3:
                 optionThreeSeeAllReservation();
             case 4:
-                optionFourAddARoom();
+                optionFourAddARoom(scanner);
             case 5:
                 optionFiveBackToMainMenu();
         }
@@ -62,8 +62,7 @@ public class AdminMenu {
     }
 
     //4.Add a room
-    public static void optionFourAddARoom(){
-        Scanner scanner = new Scanner(System.in);
+    public static void optionFourAddARoom(Scanner scanner){
         List<IRoom> rooms = new ArrayList<>();
         boolean endFlag = true;
         while(endFlag){

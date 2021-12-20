@@ -58,6 +58,35 @@ public class InputValidation {
         return inputEmail;
     }
 
+    public static String getValidYOrN(Scanner scanner){
+        boolean isDone = false;
+        String input = null;
+        while(!isDone) {
+            try {
+                input = scanner.nextLine();
+                isYesOrNo(input);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return input;
+    }
+
+    public static String getValidNumber1To2(Scanner scanner){
+        boolean isDone = false;
+        String input = null;
+        while(!isDone) {
+            try {
+                input = scanner.nextLine();
+                is1Or2(input);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return input;
+    }
 
     /**
      * check the input, make sure it's in range of 1 to 5
@@ -74,7 +103,7 @@ public class InputValidation {
     }
 
     /**
-     * if is not a Date, throw an exception indicate the wrong input
+     * if it is not a Date, throw an exception to indicate the wrong input
      * @param date
      */
     public static void isDate(String date){
@@ -86,7 +115,7 @@ public class InputValidation {
     }
 
     /**
-     * if is not an Email, throw an exception indicate the wrong input
+     * if it is not an Email, throw an exception to indicate the wrong input
      * @param email
      */
     public static void isEmail(String email){
@@ -94,6 +123,23 @@ public class InputValidation {
         Pattern pattern = Pattern.compile(emailRegEx);
         if(!pattern.matcher(email).matches()){
             throw new IllegalArgumentException("Invalid email, please enter a right email: ");
+        }
+    }
+
+
+    /**
+     * if it is not y or n, throw an exception to indicate the wrong input
+     * @param input
+     */
+    public static void isYesOrNo(String input){
+        if(!input.equals("y") && !input.equals("n")){
+            throw new IllegalArgumentException("Invalid input, please enter y/n: ");
+        }
+    }
+
+    public static void is1Or2(String input){
+        if(!input.equals("1") && !input.equals("2")){
+            throw new IllegalArgumentException("Invalid input, please enter 1 or 2 (1 for single, 2 for double): ");
         }
     }
 
