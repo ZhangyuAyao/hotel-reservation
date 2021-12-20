@@ -14,17 +14,17 @@ public class AdminResource {
         return CustomerService.getCustomer(email);
     }
 
-    public void addRoom(List<Room> rooms){
-        for(Room room: rooms){
+    public static void addRoom(List<IRoom> rooms){
+        for(IRoom room: rooms){
             ReservationService.addRoom(room);
         }
     }
 
-    public Collection<IRoom> getAllRooms(){
+    public static Collection<IRoom> getAllRooms(){
         return ReservationService.roomList;
     }
 
-    public Collection<Customer> getAllCustomers(){
+    public static Collection<Customer> getAllCustomers(){
         return CustomerService.customersList;
     }
 

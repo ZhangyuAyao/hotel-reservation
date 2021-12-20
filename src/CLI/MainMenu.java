@@ -6,27 +6,62 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import api.HotelResource;
-import api.AdminResource;
 import model.IRoom;
-import model.Room;
+import model.Reservation;
 import model.RoomType;
 
 public class MainMenu {
-    //find and reserve a room
-    public static void showMainOption(){
+    public static void main(String[] args) {
+        mainMenu();
+    }
+
+    public static void mainMenu(){
+        System.out.println("----------------------------------");
         System.out.println("1.Find and reserve a room");
         System.out.println("2.See my reservation");
         System.out.println("3.Create an account");
         System.out.println("4.Admin");
         System.out.println("5.Exit");
+        System.out.println("----------------------------------");
+        System.out.println("Enter number 1 to 5: ");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        while(!checkNumber1To5Format(input)){
+            System.out.println("Enter number 1 to 5: ");
+            input = scanner.nextLine();
+        }
+        MainMenu.selectOptionMainMenu(input);
     }
 
-    public static void option1(){
+    //Check the input, make sure the input is 1 to 5
+    public static boolean checkNumber1To5Format(String number){
+        Pattern pattern = Pattern.compile("^[1-5]$");
+        return pattern.matcher(number).matches();
+    }
+
+    //chose MainMenu from 1 to 5
+    public static void selectOptionMainMenu(String number){
+        switch (number){
+            case "1":
+                optionOneFindAndReserveARoom();
+            case "2":
+                optionTwoSeeMyReservation();
+            case "3":
+                optionThreeCreateAnAccount();
+            case "4":
+                optionFourAdmin();
+            case "5":
+                optionFiveExit();
+        }
+    }
+
+    //1.Find and reserve a room
+    public static void optionOneFindAndReserveARoom(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please input the checkIn and checkOut date: ");
         System.out.println("CheckIn date: Example year/month/day, 2021/12/16");
         String checkInDateString = scanner.nextLine();
-        while(!checkInputDateFomat(checkInDateString)){
+        while(!checkInputDateFormat(checkInDateString)){
             System.out.println("Invalid Input");
             checkInDateString = scanner.nextLine();
         }
@@ -37,7 +72,7 @@ public class MainMenu {
 
         System.out.println("CheckOut date，Example y/m/d, 2021/12/17");
         String checkOutDateString = scanner.nextLine();
-        while(!checkInputDateFomat(checkOutDateString)){
+        while(!checkInputDateFormat(checkOutDateString)){
             System.out.println("Invalid Input");
             checkOutDateString = scanner.nextLine();
         }
@@ -59,37 +94,34 @@ public class MainMenu {
         }
         if(availableDoubleRoomCount == 0 && availableSingleRoomCount == 0){
             System.out.println("Sorry to tell you, There are no available rooms");
-            showMainOption();
-            return;
+            mainMenu();
         }
         System.out.println("There are " + availableSingleRoomCount + " single rooms" +
                             " and " + availableDoubleRoomCount + " double rooms available!");
         System.out.println("Do you want to reserve?");
         String yOrN = scanner.nextLine();
-        while(yOrN != "y" && yOrN != "n") {
+        while(!yOrN.equals("y") && !yOrN.equals("n")) {
             System.out.println("Invalid input");
             yOrN = scanner.nextLine();
         }
-        if (yOrN == "y") {
+        if (yOrN.equals("y")) {
             System.out.println("What kind of Room would you like to reserve? input single or double to chose");
             String roomType = scanner.nextLine();
-            while(roomType != "single" && roomType != "double"){
+            while(!roomType.equals("single") && !roomType.equals("double")){
                 System.out.println("Invalid input");
                 roomType = scanner.nextLine();
             }
-            if(roomType == "single" && availableSingleRoomCount == 0){
+            if(roomType.equals("single") && availableSingleRoomCount == 0){
                 System.out.println("There are no single rooms available");
-                showMainOption();
-                return;
-            }else if(roomType == "double" && availableDoubleRoomCount == 0){
+                mainMenu();
+            }else if(roomType.equals("double") && availableDoubleRoomCount == 0){
                 System.out.println("There are no double rooms available");
-                showMainOption();
-                return;
+                mainMenu();
             }
 
             //从RoomList选取一间单人房or双人房
             IRoom reserveRoom = null;
-            if(roomType == "single"){
+            if(roomType.equals("single")){
                 for(IRoom room: RoomList){
                     if(room.getRoomType() == RoomType.SINGLE){
                         reserveRoom = room;
@@ -105,32 +137,70 @@ public class MainMenu {
                 }
             }
 
-            String email = inputEmail();
+            System.out.println("Please input your email: ");
+            String email = scanner.nextLine();
+            while(!checkEmailFormat(email)){
+                System.out.println("Invalid Input, Please input your email: ");
+                email = scanner.nextLine();
+            }
             HotelResource.bookARoom(email, reserveRoom, checkInDate, checkOutDate);
         } else{
-            showMainOption();
-            return;
+            optionOneFindAndReserveARoom();
         }
     }
 
-    public static String inputEmail(){
+
+    //2.See my reservation
+    public static void optionTwoSeeMyReservation(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please input your email: ");
+        String email = scanner.nextLine();
+        while(!checkInputDateFormat(email)){
+            System.out.println("Invalid Input, Please input your email: ");
+            email = scanner.nextLine();
+        }
+        Collection<Reservation> reservations = HotelResource.getCustomersReservations(email);
+        for(Reservation reservation: reservations){
+            System.out.println(reservation.toString());
+        }
+        mainMenu();
+    }
+
+    //3.Create an account
+    public static void optionThreeCreateAnAccount(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please input your email: ");
+        String email = scanner.nextLine();
+        while(!checkEmailFormat(email)){
+            System.out.println("Invalid Input, Please input your email: ");
+            email = scanner.nextLine();
+        }
+        System.out.println("Please input your first name: ");
+        String firstName = scanner.nextLine();
+        System.out.println("Please input your last name: ");
+        String lastName = scanner.nextLine();
+        HotelResource.createACustomer(email, firstName, lastName);
+        mainMenu();
+    }
+
+    //4.Admin
+    public static void optionFourAdmin(){
+        AdminMenu.adminMenu();
+    }
+
+    //5.Exit
+    public static void optionFiveExit(){}
+
+    public static boolean checkEmailFormat(String email){
         String emailRegEx = "^(.+)@(.+).(.+)$";
         Pattern pattern = Pattern.compile(emailRegEx);
-        System.out.println("Please input your emil: ");
-        Scanner email = new Scanner(System.in);
-        String emailString = email.nextLine();
-        while(!pattern.matcher(emailString).matches()) {
-            System.out.println("Invalid input");
-            email = new Scanner(System.in);
-            emailString = email.nextLine();
-        }
-        return emailString;
+        return pattern.matcher(email).matches();
     }
 
 
-    public static Boolean checkInputDateFomat(String checkInDate){
-        String dateFomat = "^(20[0-9][0-9])/([0-9]|([0-1][0-2]))/([0-9]|([0-2][0-9])|(30))$";
-        Pattern pattern = Pattern.compile(dateFomat);
+    public static Boolean checkInputDateFormat(String checkInDate){
+        String dateFormat = "^(20[0-9][0-9])/([0-9]|([0-1][0-2]))/([0-9]|([0-2][0-9])|(30))$";
+        Pattern pattern = Pattern.compile(dateFormat);
         return pattern.matcher(checkInDate).matches();
     }
 
