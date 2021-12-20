@@ -35,11 +35,26 @@ public class ReservationService {
         return reservation;
     }
 
+    //This method is to find all the available room
+//    伪代码：
+//    1. 先寻找没有被reserve的room
+//        遍历所有room，其中如果roomID有不在reservation的roomID中，则符合预定条件
+//    2. 再考虑room被reserve的情况
+//        遍历所有reservation
+//        如果被预定房间的checkout date小于这次的checkin date，则符合条件
+//
     public static Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate){
-        Collection<IRoom> storeRoomList = new ArrayList<>();
+        Collection<IRoom> storeRoomList = new HashSet<>();
+        for(IRoom room: roomList){
+            for(Reservation reservation: reservationList){
+                if(!room.getRoomNumber().equals(reservation.getRoom().getRoomNumber())){
+                    storeRoomList.add(room);
+                }
+            }
+        }
         for(Reservation reservation: reservationList){
-            if(reservation.getCheckInDate() == checkInDate && reservation.getCheckOutDate() == checkOutDate){
-                roomList.add(reservation.getRoom());
+            if(reservation.getCheckOutDate().before(checkInDate)){
+                storeRoomList.add(reservation.getRoom());
             }
         }
         return storeRoomList;

@@ -22,7 +22,7 @@ public class AdminMenu {
         System.out.println("----------------------------------");
         System.out.println("Enter number 1 to 5: ");
         Scanner scanner = new Scanner(System.in);
-        // Todo: 1-5格式校验
+        //  TODO: Format check
         switch (scanner.nextInt()){
             case 1:
                 optionOneSeeAllCustomers();
