@@ -2,13 +2,11 @@ package api;
 
 import model.Customer;
 import model.IRoom;
-import model.Room;
 import model.Reservation;
 import java.util.Date;
 import java.util.Collection;
 import service.ReservationService;
 import service.CustomerService;
-import service.ReservationService;
 
 public class HotelResource {
     public static Customer getCustomer(String email){

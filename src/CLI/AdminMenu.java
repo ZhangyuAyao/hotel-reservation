@@ -22,17 +22,17 @@ public class AdminMenu {
         System.out.println("----------------------------------");
         System.out.println("Enter number 1 to 5: ");
         Scanner scanner = new Scanner(System.in);
-        //  TODO: Format check
-        switch (scanner.nextInt()){
-            case 1:
+        String input = InputValidation.getValidNumber1To5(scanner);
+        switch (input){
+            case "1":
                 optionOneSeeAllCustomers();
-            case 2:
+            case "2":
                 optionTwoSeeAllRooms();
-            case 3:
+            case "3":
                 optionThreeSeeAllReservation();
-            case 4:
+            case "4":
                 optionFourAddARoom(scanner);
-            case 5:
+            case "5":
                 optionFiveBackToMainMenu();
         }
     }
@@ -61,19 +61,18 @@ public class AdminMenu {
         AdminMenu.adminMenu();
     }
 
-    //4.Add a room
+    //4.Add a or more room
     public static void optionFourAddARoom(Scanner scanner){
         List<IRoom> rooms = new ArrayList<>();
         boolean endFlag = true;
         while(endFlag){
-            // TODO: 2021/12/18  格式校验
             System.out.println("Please enter Room Number: ");
-            String roomNumber = scanner.nextLine();
+            String roomNumber = InputValidation.getValidNumber(scanner);
             System.out.println("Please enter Room Price: ");
-            double price = Double.parseDouble(scanner.nextLine());
-            System.out.println("Please enter Room Type: 1 for single, 2 for double");
-            // TODO: 增加1和2格式校验
-            String type = scanner.nextLine();
+            double price = Double.parseDouble(InputValidation.getValidNumber(scanner));
+            System.out.println("Please enter Room Type: 1 for single bed, 2 for double bed");
+
+            String type = InputValidation.getValidNumber1To2(scanner);
             RoomType roomtype;
             if(type.equals("1")){
                 roomtype = RoomType.SINGLE;
@@ -82,14 +81,8 @@ public class AdminMenu {
                 roomtype = RoomType.DOUBLE;
             }
             rooms.add(new Room(roomNumber, price, roomtype));
-
             System.out.println("Do you want to add another room? y/n");
-            String yOrN = scanner.nextLine();
-            while(!yOrN.equals("y") && !yOrN.equals("n")){
-                System.out.println("Invalid input");
-                System.out.println("Do you want to add another room? y/n");
-                yOrN = scanner.nextLine();
-            }
+            String yOrN = InputValidation.getValidYOrN(scanner);
             if(yOrN.equals("n")){
                 endFlag = false;
             }

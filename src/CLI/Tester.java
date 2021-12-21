@@ -15,8 +15,8 @@ public class Tester {
 //            System.out.println("other");
 //        }
 //        MainMenu.optionOneFindAndReserveARoom();
-        int type = scanner.nextInt();
-        System.out.println("Type is: " + type);
+        int String = scanner.nextInt();
+
     }
 
 }

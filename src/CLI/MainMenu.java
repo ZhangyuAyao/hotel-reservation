@@ -2,13 +2,10 @@ package CLI;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 import api.HotelResource;
 import model.IRoom;
 import model.Reservation;
-import model.RoomType;
 
 public class MainMenu {
     public static void main(String[] args) {
@@ -16,13 +13,13 @@ public class MainMenu {
     }
 
     public static void mainMenu(){
-        System.out.println("----------------------------------");
+        System.out.println("-----------------------------------------------");
         System.out.println("1.Find and reserve a room");
         System.out.println("2.See my reservation");
         System.out.println("3.Create an account");
         System.out.println("4.Admin");
         System.out.println("5.Exit");
-        System.out.println("----------------------------------");
+        System.out.println("-----------------------------------------------");
         System.out.println("Enter number 1 to 5: ");
         Scanner scanner = new Scanner(System.in);
         String input = InputValidation.getValidNumber1To5(scanner);
@@ -32,7 +29,7 @@ public class MainMenu {
     //chose MainMenu from 1 to 5
     /**
      *
-     * @param number
+     * @param number user input
      */
     public static void selectOptionMainMenu(String number, Scanner scanner){
         switch (number){
@@ -51,12 +48,27 @@ public class MainMenu {
 
     //1.Find and reserve a room
     public static void optionOneFindAndReserveARoom(Scanner scanner){
+        System.out.println("Do you have an account? y/n");
+        String yOrN = InputValidation.getValidYOrN(scanner);
+        if(yOrN.equals("n")){
+            System.out.println("Please create an account first");
+            mainMenu();
+            return;
+        }
+        System.out.println("Please input your email: ");
+        String email = InputValidation.getValidEmail(scanner);
+        if(HotelResource.getCustomer(email) == null){
+            System.out.println("Account " + email + " is not exist");
+            mainMenu();
+            return;
+        }
         System.out.println("Please input the checkIn and checkOut date: ");
-        System.out.println("CheckIn date: Example year/month/day, 2021/12/16");
-        Date checkInDate = InputValidation.getValidDate(scanner);
-        System.out.println("CheckOut date，Example y/m/d, 2021/12/17");
-        Date checkOutDate = InputValidation.getValidDate(scanner);
-        reserveProcess(checkInDate, checkOutDate, scanner);
+        System.out.println("Please input checkIn date: year/month/day, eg: 2021/12/12");
+        Calendar checkInDate = InputValidation.getValidDate(scanner);
+        System.out.println("Please input checkOut date: year/month/day, eg: 2021/12/13");
+        Calendar checkOutDate = InputValidation.getValidDate(scanner);
+        reserveProcess(checkInDate, checkOutDate, email, scanner);
+        mainMenu();
     }
 
 
@@ -80,6 +92,7 @@ public class MainMenu {
         System.out.println("Please input your last name: ");
         String lastName = scanner.nextLine();
         HotelResource.createACustomer(email, firstName, lastName);
+        System.out.println("Account created successfully");
         mainMenu();
     }
 
@@ -92,68 +105,58 @@ public class MainMenu {
     public static void optionFiveExit(){}
 
     /**
-     * get all availableRoom and reserve process
+     * get all availableRoom
+     * if there are no availableRoom, get all recommended room(check in and check out plus 7 days)
      */
-    public static void reserveProcess(Date checkInDate, Date checkOutDate, Scanner scanner){
-        Collection<IRoom> availableRooms = HotelResource.findARoom(checkInDate, checkOutDate);
-        int availableSingleRoomCount = 0;
-        int availableDoubleRoomCount = 0;
-        for(IRoom room: availableRooms){
-            if(room.getRoomType().equals(RoomType.SINGLE)){
-                availableSingleRoomCount += 1;
+    public static void reserveProcess(Calendar checkInDate, Calendar checkOutDate, String email, Scanner scanner){
+        Collection<IRoom> availableRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
+        if(availableRooms.size() == 0){
+            System.out.println("Sorry to tell you, There are no available rooms");
+            Collection<IRoom> recommendRooms = searchForRecommendRooms(checkInDate, checkOutDate);
+            if(recommendRooms.size() == 0) {
+                mainMenu();
             }
             else{
-                availableDoubleRoomCount += 1;
-            }
-        }
-        if(availableDoubleRoomCount == 0 && availableSingleRoomCount == 0){
-            System.out.println("Sorry to tell you, There are no available rooms");
-            mainMenu();
-            return;
-        }
-        System.out.println("There are " + availableSingleRoomCount + " single rooms" +
-                " and " + availableDoubleRoomCount + " double rooms available!");
-
-        System.out.println("Do you want to reserve?");
-        String inputYOrN = InputValidation.getValidYOrN(scanner);
-
-        if (inputYOrN.equals("y")) {
-            System.out.println("What kind of room would you like to reserve? 1 for single, 2 for double");
-            String roomType = InputValidation.getValidNumber1To2(scanner);
-            if(roomType.equals("1") && availableSingleRoomCount == 0){
-                System.out.println("There are no single rooms available");
-                mainMenu();
-                return;
-            }else if(roomType.equals("2") && availableDoubleRoomCount == 0){
-                System.out.println("There are no double rooms available");
-                mainMenu();
-                return;
-            }
-
-            //从RoomList选取一间单人房or双人房,1 for single, 2 for double
-            IRoom reserveRoom = null;
-            if(roomType.equals("1")){
-                for(IRoom room: availableRooms){
-                    if(room.getRoomType().equals(RoomType.SINGLE)){
-                        reserveRoom = room;
-                        break;
-                    }
+                System.out.println("Here are some recommended rooms for you: ");
+                //display all recommended room to user
+                for (IRoom room : recommendRooms) {
+                    System.out.println(room.toString());
                 }
-            } else {
-                for(IRoom room: availableRooms){
-                    if(room.getRoomType().equals(RoomType.DOUBLE)){
-                        reserveRoom = room;
-                        break;
-                    }
+                System.out.println("Do you want to reserve? y/n");
+                String inputYOrN = InputValidation.getValidYOrN(scanner);
+                if (inputYOrN.equals("y")) {
+                    System.out.println("Which room would you like to reserve? input room number: ");
+                    String roomNumber = InputValidation.getValidRoomNumber(scanner, availableRooms);
+                    IRoom room = HotelResource.getRoom(roomNumber);
+                    Reservation reservation = HotelResource.bookARoom(email, room, checkInDate.getTime(), checkOutDate.getTime());
+                    System.out.println("successful reservation!");
+                    System.out.println(reservation);
                 }
+
             }
-
-            System.out.println("Please input your email: ");
-            String email = InputValidation.getValidEmail(scanner);
-            HotelResource.bookARoom(email, reserveRoom, checkInDate, checkOutDate);
-        } else{
-            optionOneFindAndReserveARoom(scanner);
         }
-
+        else{
+            //display all available room to user
+            for(IRoom room: availableRooms) {
+                System.out.println(room);
+            }
+            System.out.println("Do you want to reserve? y/n");
+            String inputYOrN = InputValidation.getValidYOrN(scanner);
+            if (inputYOrN.equals("y")) {
+                System.out.println("Which room would you like to reserve? input room number: ");
+                String roomNumber = InputValidation.getValidRoomNumber(scanner, availableRooms);
+                IRoom room = HotelResource.getRoom(roomNumber);
+                Reservation reservation = HotelResource.bookARoom(email, room, checkInDate.getTime(), checkOutDate.getTime());
+                System.out.println("successful reservation!");
+                System.out.println(reservation);
+            }
+        }
     }
+
+    public static Collection<IRoom> searchForRecommendRooms(Calendar checkInDate, Calendar checkOutDate){
+        checkInDate.add(Calendar.DATE, 7);
+        checkOutDate.add(Calendar.DATE, 7);
+        return HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
+    }
+
 }

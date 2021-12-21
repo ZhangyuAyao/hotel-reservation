@@ -1,7 +1,9 @@
 package CLI;
 
+import model.IRoom;
+
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -25,22 +27,24 @@ public class InputValidation {
         return inputNumber;
     }
 
-    public static Date getValidDate(Scanner scanner){
+    public static Calendar getValidDate(Scanner scanner){
         boolean isDone = false;
-        String inputDate = null;
+        String inputDate;
+        String[] tempDate;
+        Calendar calendar = null;
         while(!isDone) {
             try {
                 inputDate = scanner.nextLine();
                 isDate(inputDate);
                 isDone = true;
+                tempDate = inputDate.split("/");
+                calendar = Calendar.getInstance();
+                calendar.set(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]));
             } catch (IllegalArgumentException ex) {
                 System.out.println(ex.getLocalizedMessage());
             }
         }
-        String[] tempDate = inputDate.split("/");
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]));
-        return calendar.getTime();
+       return calendar;
     }
 
     public static String getValidEmail(Scanner scanner){
@@ -88,12 +92,42 @@ public class InputValidation {
         return input;
     }
 
+    public static String getValidNumber(Scanner scanner){
+        boolean isDone = false;
+        String number = null;
+        while(!isDone) {
+            try {
+                number = scanner.nextLine();
+                isNumber(number);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return number;
+    }
+
+    public static String getValidRoomNumber(Scanner scanner, Collection<IRoom> availableRooms){
+        boolean isDone = false;
+        String roomNumber = null;
+        while(!isDone) {
+            try {
+                roomNumber = scanner.nextLine();
+                isNumber(roomNumber);
+                isRoomNumber(roomNumber, availableRooms);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return roomNumber;
+    }
+
     /**
      * check the input, make sure it's in range of 1 to 5
      * otherwise, throw an exception
      *
      * @param number: input data
-     * @return boolean: true for right input, false for wrong input
      */
     public static void isNumber1To5(String number){
         Pattern pattern = Pattern.compile("^[1-5]$");
@@ -104,7 +138,7 @@ public class InputValidation {
 
     /**
      * if it is not a Date, throw an exception to indicate the wrong input
-     * @param date
+     * @param date input String date
      */
     public static void isDate(String date){
         String dateFormat = "^(20[0-9][0-9])/([0-9]|([0-1][0-2]))/([0-9]|([0-2][0-9])|(30))$";
@@ -116,7 +150,7 @@ public class InputValidation {
 
     /**
      * if it is not an Email, throw an exception to indicate the wrong input
-     * @param email
+     * @param email input email
      */
     public static void isEmail(String email){
         String emailRegEx = "^(.+)@(.+).(.+)$";
@@ -129,7 +163,7 @@ public class InputValidation {
 
     /**
      * if it is not y or n, throw an exception to indicate the wrong input
-     * @param input
+     * @param input user's input
      */
     public static void isYesOrNo(String input){
         if(!input.equals("y") && !input.equals("n")){
@@ -140,6 +174,35 @@ public class InputValidation {
     public static void is1Or2(String input){
         if(!input.equals("1") && !input.equals("2")){
             throw new IllegalArgumentException("Invalid input, please enter 1 or 2 (1 for single, 2 for double): ");
+        }
+    }
+
+    /**
+     * check number: number can only be a number, can not be string or others.
+     * @param number input number
+     */
+    public static void isNumber(String number){
+        String numberRegEx = "^([0-9]+)$";
+        Pattern pattern = Pattern.compile(numberRegEx);
+        if(!pattern.matcher(number).matches()){
+            throw new IllegalArgumentException("Invalid number, please enter a right number: (can only be a number)");
+        }
+    }
+
+    /**
+     * check if the input roomNumber exist in the list
+     * @param roomNumber user's input roomNumber
+     * @param availableRooms existing room, use to check the input
+     */
+    public static void isRoomNumber(String roomNumber, Collection<IRoom> availableRooms){
+        boolean match = false;
+        for(IRoom room: availableRooms) {
+            if(room.getRoomNumber().equals(roomNumber)){
+                match = true;
+            }
+        }
+        if(!match){
+            throw new IllegalArgumentException("Room number doesn't exist, please enter again");
         }
     }
 
