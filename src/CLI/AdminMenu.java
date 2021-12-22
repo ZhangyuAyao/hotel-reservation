@@ -79,12 +79,12 @@ public class AdminMenu {
 
     //4.Add a or more room
     public static void optionFourAddARoom(Scanner scanner){
-        List<IRoom> rooms = new ArrayList<>();
+        List<IRoom> addRooms = new ArrayList<>();
         boolean endFlag = true;
         while(endFlag){
             System.out.println("Please enter Room Number: ");
-            Collection<IRoom> allRooms = AdminResource.getAllRooms();
-            String roomNumber = InputValidation.getValidUniqueRoomNumber(scanner, allRooms);
+            Collection<IRoom> existRooms = AdminResource.getAllRooms();
+            String roomNumber = InputValidation.getValidUniqueRoomNumber(scanner, existRooms, addRooms);
             System.out.println("Please enter Room Price: ");
             double price = Double.parseDouble(InputValidation.getValidNumber(scanner));
             System.out.println("Please enter Room Type: 1 for single bed, 2 for double bed");
@@ -96,14 +96,14 @@ public class AdminMenu {
             else{
                 roomtype = RoomType.DOUBLE;
             }
-            rooms.add(new Room(roomNumber, price, roomtype));
+            addRooms.add(new Room(roomNumber, price, roomtype));
             System.out.println("Do you want to add another room? y/n");
             String yOrN = InputValidation.getValidYOrN(scanner);
             if(yOrN.equals("n")){
                 endFlag = false;
             }
         }
-        AdminResource.addRoom(rooms);
+        AdminResource.addRoom(addRooms);
         AdminMenu.adminMenu();
     }
 }

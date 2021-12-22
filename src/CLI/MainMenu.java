@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Scanner;
 import api.HotelResource;
+import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
@@ -80,7 +81,15 @@ public class MainMenu {
     public static void optionTwoSeeMyReservation(Scanner scanner){
         System.out.println("Please input your email: ");
         String email = InputValidation.getValidEmail(scanner);
+        if(HotelResource.getCustomer(email) == null){
+            System.out.println("Account " + email + " is not exist");
+            mainMenu();
+            return;
+        }
         Collection<Reservation> reservations = HotelResource.getCustomersReservations(email);
+        if(reservations.size() == 0){
+            System.out.println("You don't have any reservation");
+        }
         for(Reservation reservation: reservations){
             System.out.println(reservation.toString());
         }
@@ -91,12 +100,17 @@ public class MainMenu {
     public static void optionThreeCreateAnAccount(Scanner scanner){
         System.out.println("Please input your email: ");
         String email = InputValidation.getValidEmail(scanner);
-        System.out.println("Please input your first name: ");
-        String firstName = scanner.nextLine();
-        System.out.println("Please input your last name: ");
-        String lastName = scanner.nextLine();
-        HotelResource.createACustomer(email, firstName, lastName);
-        System.out.println("Account created successfully");
+        if(HotelResource.getCustomer(email) != null){
+            System.out.println("You already have an account: " + email);
+        }
+        else{
+            System.out.println("Please input your first name: ");
+            String firstName = scanner.nextLine();
+            System.out.println("Please input your last name: ");
+            String lastName = scanner.nextLine();
+            HotelResource.createACustomer(email, firstName, lastName);
+            System.out.println("Account created successfully");
+        }
         mainMenu();
     }
 
