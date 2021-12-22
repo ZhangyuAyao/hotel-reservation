@@ -41,6 +41,7 @@ public class InputValidation {
                 isDone = true;
                 tempDate = inputDate.split("/");
                 calendar = Calendar.getInstance();
+                calendar.set
                 calendar.set(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]));
             } catch (IllegalArgumentException ex) {
                 System.out.println(ex.getLocalizedMessage());
@@ -161,10 +162,10 @@ public class InputValidation {
      * @param date input String date
      */
     public static void isDate(String date){
-        String dateFormat = "^(20[0-9][0-9])/([0-9]|([0-1][0-2]))/([0-9]|([0-2][0-9])|(30))$";
+        String dateFormat = "^(20[0-9][0-9])/(([0-1][0-2])|[0-9])/(([0-2][0-9])|(30)|[0-9])$";
         Pattern pattern = Pattern.compile(dateFormat);
         if(!pattern.matcher(date).matches()){
-            throw new IllegalArgumentException("Invalid email, please enter correct email format");
+            throw new IllegalArgumentException("Invalid Date, please enter correct Date");
         }
     }
 

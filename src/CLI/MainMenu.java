@@ -125,10 +125,12 @@ public class MainMenu {
      */
     public static void reserveProcess(Calendar checkInDate, Calendar checkOutDate, String email, Scanner scanner){
         Collection<IRoom> availableRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
+        System.out.println(checkInDate.getTime());
+        System.out.println(checkOutDate.getTime());
         if(availableRooms.size() == 0){
             System.out.println("Sorry to tell you, There are no available rooms");
-            checkInDate.add(Calendar.DATE, 7);
-            checkOutDate.add(Calendar.DATE,7);
+            checkInDate.add(Calendar.DAY_OF_MONTH, 7);
+            checkOutDate.add(Calendar.DAY_OF_MONTH,7);
             Collection<IRoom> recommendRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
             if(recommendRooms.size() == 0) {
                 mainMenu();
