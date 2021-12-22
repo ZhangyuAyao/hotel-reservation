@@ -46,21 +46,37 @@ public class ReservationService {
      */
     public static Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate){
         Collection<IRoom> availableRoomList = new HashSet<>();
-        //the condition where reservationList is null
+        //1.the condition where reservationList is null
         if(reservationList.size() == 0){
             return roomList;
         }
+        //2.looking for no booking room
         for(IRoom room: roomList){
             boolean isBook = false;
             for(Reservation reservation: reservationList){
-                if(!room.getRoomNumber().equals(reservation.getRoom().getRoomNumber())){
+                if(room.equals(reservation.getRoom())){
                     isBook = true;
+                    break;
                 }
             }
             if(!isBook){
                 availableRoomList.add(room);
             }
         }
+        //3.looking for booking room but time not in the same range
+        for(IRoom room: roomList){
+            boolean isBook = false;
+            for(Reservation reservation: reservationList){
+                if(reservation.getCheckOutDate().after(checkInDate) && reservation.getCheckInDate().before(checkOutDate)){
+                    isBook = true;
+                    break;
+                }
+            }
+            if(!isBook){
+                availableRoomList.add(room);
+            }
+        }
+
         for(Reservation reservation: reservationList){
             if(reservation.getCheckOutDate().before(checkInDate) || reservation.getCheckInDate().after(checkOutDate)){
                 availableRoomList.add(reservation.getRoom());

@@ -1,5 +1,6 @@
 package CLI;
 
+import java.util.Calendar;
 import java.util.Scanner;
 
 public class Tester {
@@ -15,7 +16,17 @@ public class Tester {
 //            System.out.println("other");
 //        }
 //        MainMenu.optionOneFindAndReserveARoom();
-        int String = scanner.nextInt();
+//        System.out.println("year: ");
+//        Integer year = scanner.nextInt();
+//        System.out.println("month: ");
+//        Integer month = scanner.nextInt();
+//        System.out.println("day: ");
+//        Integer day = scanner.nextInt();
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(year, month, day);
+//        calendar.set(year, month, day);
+//        System.out.println(calendar.getTime());
 
     }
 

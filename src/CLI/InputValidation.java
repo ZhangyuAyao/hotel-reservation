@@ -41,8 +41,7 @@ public class InputValidation {
                 isDone = true;
                 tempDate = inputDate.split("/");
                 calendar = Calendar.getInstance();
-                calendar.set
-                calendar.set(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]));
+                calendar.set(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1])-1, Integer.parseInt(tempDate[2]), 12, 0,0);
             } catch (IllegalArgumentException ex) {
                 System.out.println(ex.getLocalizedMessage());
             }
@@ -174,7 +173,7 @@ public class InputValidation {
      * @param email input email
      */
     public static void isEmail(String email){
-        String emailRegEx = "^(.+)@(.+).(.+)$";
+        String emailRegEx = "^(.+)@(.+).com$";
         Pattern pattern = Pattern.compile(emailRegEx);
         if(!pattern.matcher(email).matches()){
             throw new IllegalArgumentException("Invalid email, please enter a right email: ");

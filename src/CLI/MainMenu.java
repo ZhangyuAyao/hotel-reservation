@@ -72,7 +72,12 @@ public class MainMenu {
         Calendar checkInDate = InputValidation.getValidDate(scanner);
         System.out.println("Please input checkOut date: year/month/day, eg: 2021/12/13");
         Calendar checkOutDate = InputValidation.getValidDate(scanner);
-        reserveProcess(checkInDate, checkOutDate, email, scanner);
+        if(checkInDate.equals(checkOutDate) || checkInDate.after(checkOutDate)){
+            System.out.println("Invalid input, checkIn date is on or after checkOut date");
+        }
+        else{
+            reserveProcess(checkInDate, checkOutDate, email, scanner);
+        }
         mainMenu();
     }
 
@@ -125,12 +130,10 @@ public class MainMenu {
      */
     public static void reserveProcess(Calendar checkInDate, Calendar checkOutDate, String email, Scanner scanner){
         Collection<IRoom> availableRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
-        System.out.println(checkInDate.getTime());
-        System.out.println(checkOutDate.getTime());
         if(availableRooms.size() == 0){
             System.out.println("Sorry to tell you, There are no available rooms");
-            checkInDate.add(Calendar.DAY_OF_MONTH, 7);
-            checkOutDate.add(Calendar.DAY_OF_MONTH,7);
+            checkInDate.add(Calendar.DATE, 7);
+            checkOutDate.add(Calendar.DATE,7);
             Collection<IRoom> recommendRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
             if(recommendRooms.size() == 0) {
                 mainMenu();
@@ -138,7 +141,7 @@ public class MainMenu {
             else{
                 System.out.println("Here are some recommended rooms for you in 7 days: ");
                 System.out.println("Check in date: " + checkInDate.getTime());
-                System.out.println("Check in date: " + checkOutDate.getTime());
+                System.out.println("Check Out date: " + checkOutDate.getTime());
                 for (IRoom room : recommendRooms) { //display all recommended room to user
                     System.out.println(room.toString());
                 }
