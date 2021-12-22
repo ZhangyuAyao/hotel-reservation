@@ -35,14 +35,18 @@ public class MainMenu {
         switch (number){
             case "1":
                 optionOneFindAndReserveARoom(scanner);
+                break;
             case "2":
                 optionTwoSeeMyReservation(scanner);
+                break;
             case "3":
                 optionThreeCreateAnAccount(scanner);
+                break;
             case "4":
                 optionFourAdmin();
+                break;
             case "5":
-                optionFiveExit();
+                break;
         }
     }
 
@@ -101,9 +105,6 @@ public class MainMenu {
         AdminMenu.adminMenu();
     }
 
-    //5.Exit
-    public static void optionFiveExit(){}
-
     /**
      * get all availableRoom
      * if there are no availableRoom, get all recommended room(check in and check out plus 7 days)
@@ -112,27 +113,29 @@ public class MainMenu {
         Collection<IRoom> availableRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
         if(availableRooms.size() == 0){
             System.out.println("Sorry to tell you, There are no available rooms");
-            Collection<IRoom> recommendRooms = searchForRecommendRooms(checkInDate, checkOutDate);
+            checkInDate.add(Calendar.DATE, 7);
+            checkOutDate.add(Calendar.DATE,7);
+            Collection<IRoom> recommendRooms = HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
             if(recommendRooms.size() == 0) {
                 mainMenu();
             }
             else{
-                System.out.println("Here are some recommended rooms for you: ");
-                //display all recommended room to user
-                for (IRoom room : recommendRooms) {
+                System.out.println("Here are some recommended rooms for you in 7 days: ");
+                System.out.println("Check in date: " + checkInDate.getTime());
+                System.out.println("Check in date: " + checkOutDate.getTime());
+                for (IRoom room : recommendRooms) { //display all recommended room to user
                     System.out.println(room.toString());
                 }
                 System.out.println("Do you want to reserve? y/n");
                 String inputYOrN = InputValidation.getValidYOrN(scanner);
                 if (inputYOrN.equals("y")) {
                     System.out.println("Which room would you like to reserve? input room number: ");
-                    String roomNumber = InputValidation.getValidRoomNumber(scanner, availableRooms);
+                    String roomNumber = InputValidation.getValidExistRoomNumber(scanner, recommendRooms);
                     IRoom room = HotelResource.getRoom(roomNumber);
                     Reservation reservation = HotelResource.bookARoom(email, room, checkInDate.getTime(), checkOutDate.getTime());
                     System.out.println("successful reservation!");
                     System.out.println(reservation);
                 }
-
             }
         }
         else{
@@ -144,7 +147,7 @@ public class MainMenu {
             String inputYOrN = InputValidation.getValidYOrN(scanner);
             if (inputYOrN.equals("y")) {
                 System.out.println("Which room would you like to reserve? input room number: ");
-                String roomNumber = InputValidation.getValidRoomNumber(scanner, availableRooms);
+                String roomNumber = InputValidation.getValidExistRoomNumber(scanner, availableRooms);
                 IRoom room = HotelResource.getRoom(roomNumber);
                 Reservation reservation = HotelResource.bookARoom(email, room, checkInDate.getTime(), checkOutDate.getTime());
                 System.out.println("successful reservation!");
@@ -153,10 +156,5 @@ public class MainMenu {
         }
     }
 
-    public static Collection<IRoom> searchForRecommendRooms(Calendar checkInDate, Calendar checkOutDate){
-        checkInDate.add(Calendar.DATE, 7);
-        checkOutDate.add(Calendar.DATE, 7);
-        return HotelResource.findARoom(checkInDate.getTime(), checkOutDate.getTime());
-    }
 
 }

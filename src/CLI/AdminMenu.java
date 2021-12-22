@@ -1,6 +1,7 @@
 package CLI;
 
 import api.AdminResource;
+import com.sun.tools.javac.Main;
 import model.Customer;
 import model.IRoom;
 import model.Room;
@@ -26,22 +27,32 @@ public class AdminMenu {
         switch (input){
             case "1":
                 optionOneSeeAllCustomers();
+                break;
             case "2":
                 optionTwoSeeAllRooms();
+                break;
             case "3":
                 optionThreeSeeAllReservation();
+                break;
             case "4":
                 optionFourAddARoom(scanner);
+                break;
             case "5":
-                optionFiveBackToMainMenu();
+                MainMenu.mainMenu();
+                break;
         }
     }
 
     //1.See all Customers
     public static void optionOneSeeAllCustomers(){
         Collection<Customer> customers = AdminResource.getAllCustomers();
-        for(Customer customer: customers){
-            System.out.println(customer.toString());
+        if(customers.size() == 0){
+            System.out.println("There is no customer");
+        }
+        else{
+            for(Customer customer: customers){
+                System.out.println(customer.toString());
+            }
         }
         AdminMenu.adminMenu();
     }
@@ -49,8 +60,13 @@ public class AdminMenu {
     //2.See all Rooms
     public static void optionTwoSeeAllRooms(){
         Collection<IRoom> rooms = AdminResource.getAllRooms();
-        for(IRoom room: rooms){
-            System.out.println(room.toString());
+        if(rooms.size() == 0){
+            System.out.println("There is no room");
+        }
+        else{
+            for(IRoom room: rooms){
+                System.out.println(room.toString());
+            }
         }
         AdminMenu.adminMenu();
     }
@@ -67,11 +83,11 @@ public class AdminMenu {
         boolean endFlag = true;
         while(endFlag){
             System.out.println("Please enter Room Number: ");
-            String roomNumber = InputValidation.getValidNumber(scanner);
+            Collection<IRoom> allRooms = AdminResource.getAllRooms();
+            String roomNumber = InputValidation.getValidUniqueRoomNumber(scanner, allRooms);
             System.out.println("Please enter Room Price: ");
             double price = Double.parseDouble(InputValidation.getValidNumber(scanner));
             System.out.println("Please enter Room Type: 1 for single bed, 2 for double bed");
-
             String type = InputValidation.getValidNumber1To2(scanner);
             RoomType roomtype;
             if(type.equals("1")){
@@ -89,10 +105,5 @@ public class AdminMenu {
         }
         AdminResource.addRoom(rooms);
         AdminMenu.adminMenu();
-    }
-
-    //5.Back to main Menu
-    public static void optionFiveBackToMainMenu(){
-        MainMenu.mainMenu();
     }
 }

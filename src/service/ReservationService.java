@@ -74,8 +74,13 @@ public class ReservationService {
     }
 
     public static void printAllReservation(){
-        for(Reservation reservation: reservationList){
-            System.out.println(reservation);
+        if(reservationList.size() == 0){
+            System.out.println("There is no reservation");
+        }
+        else{
+            for(Reservation reservation: reservationList){
+                System.out.println(reservation);
+            }
         }
     }
 

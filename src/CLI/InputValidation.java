@@ -1,7 +1,9 @@
 package CLI;
 
+import model.Customer;
 import model.IRoom;
 
+import java.net.CookieHandler;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Scanner;
@@ -107,7 +109,8 @@ public class InputValidation {
         return number;
     }
 
-    public static String getValidRoomNumber(Scanner scanner, Collection<IRoom> availableRooms){
+    //get an existing room number
+    public static String getValidExistRoomNumber(Scanner scanner, Collection<IRoom> availableRooms){
         boolean isDone = false;
         String roomNumber = null;
         while(!isDone) {
@@ -121,6 +124,39 @@ public class InputValidation {
             }
         }
         return roomNumber;
+    }
+
+    //get a unique room number, that means doesn't exist in the database
+    public static String getValidUniqueRoomNumber(Scanner scanner, Collection<IRoom> roomList){
+        boolean isDone = false;
+        String roomNumber = null;
+        while(!isDone) {
+            try {
+                roomNumber = scanner.nextLine();
+                isNumber(roomNumber);
+                isUniqueRoomNumber(roomNumber, roomList);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return roomNumber;
+    }
+
+    public static String getValidUniqueEmail(Scanner scanner, Collection<Customer> customers){
+        boolean isDone = false;
+        String uniqueEmail = null;
+        while(!isDone) {
+            try {
+                uniqueEmail = scanner.nextLine();
+                isEmail(uniqueEmail);
+                isUniqueEmail(uniqueEmail, customers);
+                isDone = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        return uniqueEmail;
     }
 
     /**
@@ -203,6 +239,30 @@ public class InputValidation {
         }
         if(!match){
             throw new IllegalArgumentException("Room number doesn't exist, please enter again");
+        }
+    }
+
+    public static void isUniqueEmail(String inputEmail, Collection<Customer> customers){
+        boolean match = false;
+        for(Customer customer: customers) {
+            if(customer.getEmail().equals(inputEmail)){
+                match = true;
+            }
+        }
+        if(match){
+            throw new IllegalArgumentException("the email is already exist, please input again");
+        }
+    }
+
+    public static void isUniqueRoomNumber(String roomNumber, Collection<IRoom> roomList){
+        boolean match = false;
+        for(IRoom room: roomList) {
+            if(room.getRoomNumber().equals(roomNumber)){
+                match = true;
+            }
+        }
+        if(match){
+            throw new IllegalArgumentException("the room number is already exist, please input again");
         }
     }
 
