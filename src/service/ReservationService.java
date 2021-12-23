@@ -65,23 +65,19 @@ public class ReservationService {
         }
         //3.looking for booking room but time not in the same range
         for(IRoom room: roomList){
-            boolean isBook = false;
+            boolean notOverlap = true;
             for(Reservation reservation: reservationList){
                 if(reservation.getCheckOutDate().after(checkInDate) && reservation.getCheckInDate().before(checkOutDate)){
-                    isBook = true;
+                    notOverlap = false;
                     break;
                 }
             }
-            if(!isBook){
+
+            if(notOverlap && sameRoom){
                 availableRoomList.add(room);
             }
         }
 
-        for(Reservation reservation: reservationList){
-            if(reservation.getCheckOutDate().before(checkInDate) || reservation.getCheckInDate().after(checkOutDate)){
-                availableRoomList.add(reservation.getRoom());
-            }
-        }
         return availableRoomList;
     }
 
