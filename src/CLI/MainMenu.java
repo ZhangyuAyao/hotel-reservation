@@ -72,7 +72,12 @@ public class MainMenu {
         Calendar checkInDate = InputValidation.getValidDate(scanner);
         System.out.println("Please input checkOut date: year/month/day, eg: 2021/12/13");
         Calendar checkOutDate = InputValidation.getValidDate(scanner);
-        reserveProcess(checkInDate, checkOutDate, email, scanner);
+        if(checkInDate.equals(checkOutDate) || checkInDate.after(checkOutDate)){
+            System.out.println("Invalid input, checkIn date is on or after checkOut date");
+        }
+        else{
+            reserveProcess(checkInDate, checkOutDate, email, scanner);
+        }
         mainMenu();
     }
 
@@ -136,7 +141,7 @@ public class MainMenu {
             else{
                 System.out.println("Here are some recommended rooms for you in 7 days: ");
                 System.out.println("Check in date: " + checkInDate.getTime());
-                System.out.println("Check in date: " + checkOutDate.getTime());
+                System.out.println("Check Out date: " + checkOutDate.getTime());
                 for (IRoom room : recommendRooms) { //display all recommended room to user
                     System.out.println(room.toString());
                 }
